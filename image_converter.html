@@ -9,7 +9,7 @@
       align-items: center;
       justify-content: space-between;
     }
-    #target-format {
+    #target-format, #resize-factor {
       width: 150px;
     }
   </style>
@@ -28,6 +28,15 @@
         <option value="image/bmp">BMP</option>
       </select>
     </div>
+    <div class="form-group mr-3">
+      <select id="resize-factor" class="form-control">
+        <option value="1">1x (original)</option>
+        <option value="0.8">0.8x</option>
+        <option value="0.5">0.5x</option>
+        <option value="0.2">0.2x</option>
+        <option value="0.1">0.1x</option>
+      </select>
+    </div>
     <button id="convert-button" class="btn btn-primary mr-3">Convert</button>
     <a id="download-link" download="converted-image.png" class="btn btn-success">Download</a>
   </div>
@@ -44,10 +53,11 @@
           image.src = e.target.result;
           image.onload = function() {
             var canvas = document.createElement("canvas");
-            canvas.width = image.width;
-            canvas.height = image.height;
+            var resizeFactor = document.getElementById("resize-factor").value;
+            canvas.width = image.width * resizeFactor;
+            canvas.height = image.height * resizeFactor;
             var context = canvas.getContext("2d");
-            context.drawImage(image, 0, 0);
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
             var targetFormat = document.getElementById("target-format").value;
             var dataURL = canvas.toDataURL(targetFormat);
             var fileExtension = targetFormat.split("/")[1];
